@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.*;
 import pl.tkozyra.expensetrackerapi.dto.TransactionDto;
 import pl.tkozyra.expensetrackerapi.entity.Transaction;
+import pl.tkozyra.expensetrackerapi.exception.TransactionNotFoundException;
 import pl.tkozyra.expensetrackerapi.service.TransactionService;
 import pl.tkozyra.expensetrackerapi.utils.StringToTransactionTypeConverter;
 
@@ -31,7 +32,7 @@ public class TransactionController {
     public TransactionDto findById(@PathVariable Long id) {
         return this.convertEntityToDto(transactionService
                 .findById(id)
-                .orElseThrow(() -> new RuntimeException("Transaction with given ID does not exist.")));
+                .orElseThrow(() -> new TransactionNotFoundException(id)));
     }
 
     @PostMapping
@@ -46,7 +47,7 @@ public class TransactionController {
     public TransactionDto updateTransaction(@PathVariable Long id, @RequestBody TransactionDto transactionDto) {
         Transaction transaction = transactionService
                 .findById(id)
-                .orElseThrow(() -> new RuntimeException("Transaction with given ID does not exist."));
+                .orElseThrow(() -> new TransactionNotFoundException(id));
 
         transaction.setAmount(transactionDto.getAmount());
         transaction.setCurrency(transactionDto.getCurrency());
