@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.tkozyra.expensetrackerapi.dto.TransactionDto;
 import pl.tkozyra.expensetrackerapi.entity.Transaction;
 import pl.tkozyra.expensetrackerapi.service.TransactionService;
+import pl.tkozyra.expensetrackerapi.utils.StringToTransactionTypeConverter;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,6 +16,7 @@ public class TransactionController {
 
     private final TransactionService transactionService;
     private final ModelMapper modelMapper;
+    private final StringToTransactionTypeConverter stringToTransactionTypeConverter;
 
     @GetMapping
     public List<TransactionDto> findAll() {
@@ -47,6 +49,10 @@ public class TransactionController {
                 .orElseThrow(() -> new RuntimeException("Transaction with given ID does not exist."));
 
         transaction.setAmount(transactionDto.getAmount());
+        transaction.setCurrency(transactionDto.getCurrency());
+        transaction.setTransactionType(stringToTransactionTypeConverter.convert(transactionDto.getType()));
+        transaction.setDate(transactionDto.getDate());
+        transaction.setDescription(transactionDto.getDescription());
         Transaction updatedTransaction = transactionService.save(transaction);
         return this.convertEntityToDto(updatedTransaction);
     }
@@ -56,9 +62,12 @@ public class TransactionController {
         transactionService.deleteById(id);
     }
 
-    public TransactionController(TransactionService transactionService, ModelMapper modelMapper) {
+    public TransactionController(TransactionService transactionService,
+                                 ModelMapper modelMapper,
+                                 StringToTransactionTypeConverter stringToTransactionTypeConverter) {
         this.transactionService = transactionService;
         this.modelMapper = modelMapper;
+        this.stringToTransactionTypeConverter = stringToTransactionTypeConverter;
     }
 
 
@@ -71,6 +80,7 @@ public class TransactionController {
 
     private Transaction convertDtoToEntity(TransactionDto transactionDto) {
         Transaction transaction = modelMapper.map(transactionDto, Transaction.class);
+        transaction.setTransactionType(stringToTransactionTypeConverter.convert(transactionDto.getType()));
         return transaction;
     }
 

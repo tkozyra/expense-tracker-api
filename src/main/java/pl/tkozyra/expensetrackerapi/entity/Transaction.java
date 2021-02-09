@@ -1,9 +1,10 @@
 package pl.tkozyra.expensetrackerapi.entity;
 
+import pl.tkozyra.expensetrackerapi.utils.TransactionType;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Objects;
+import java.time.LocalDate;
 
 @Entity
 public class Transaction {
@@ -12,8 +13,17 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "amount")
     private BigDecimal amount;
+
+    private String currency;
+
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+    private TransactionType transactionType;
+
+    private LocalDate date;
+
+    private String description;
 
     public Transaction(BigDecimal amount) {
         this.amount = amount;
@@ -38,16 +48,35 @@ public class Transaction {
         this.amount = amount;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Transaction that = (Transaction) o;
-        return Objects.equals(id, that.id) && Objects.equals(amount, that.amount);
+    public String getCurrency() {
+        return currency;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, amount);
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public TransactionType getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(TransactionType transactionType) {
+        this.transactionType = transactionType;
     }
 }
