@@ -1,10 +1,10 @@
 package pl.tkozyra.expensetrackerapi.controller;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.web.bind.annotation.*;
 import pl.tkozyra.expensetrackerapi.dto.TransactionDto;
 import pl.tkozyra.expensetrackerapi.entity.Transaction;
 import pl.tkozyra.expensetrackerapi.exception.TransactionNotFoundException;
+import pl.tkozyra.expensetrackerapi.mapper.TransactionMapper;
 import pl.tkozyra.expensetrackerapi.service.TransactionService;
 import pl.tkozyra.expensetrackerapi.utils.StringToTransactionTypeConverter;
 
@@ -16,30 +16,30 @@ import java.util.stream.Collectors;
 public class TransactionController {
 
     private final TransactionService transactionService;
-    private final ModelMapper modelMapper;
     private final StringToTransactionTypeConverter stringToTransactionTypeConverter;
+    private final TransactionMapper transactionMapper;
 
     @GetMapping
     public List<TransactionDto> findAll() {
         return transactionService
                 .findAll()
                 .stream()
-                .map(this::convertEntityToDto)
+                .map(transactionMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
     public TransactionDto findById(@PathVariable Long id) {
-        return this.convertEntityToDto(transactionService
+        return transactionMapper.mapToDto(transactionService
                 .findById(id)
                 .orElseThrow(() -> new TransactionNotFoundException(id)));
     }
 
     @PostMapping
     public TransactionDto createTransaction(@RequestBody TransactionDto transactionDto) {
-        Transaction transaction = convertDtoToEntity(transactionDto);
+        Transaction transaction = transactionMapper.mapToEntity(transactionDto);
         Transaction createdTransaction = transactionService.create(transaction);
-        return convertEntityToDto(createdTransaction);
+        return transactionMapper.mapToDto(createdTransaction);
 
     }
 
@@ -55,7 +55,7 @@ public class TransactionController {
         transaction.setDate(transactionDto.getDate());
         transaction.setDescription(transactionDto.getDescription());
         Transaction updatedTransaction = transactionService.save(transaction);
-        return this.convertEntityToDto(updatedTransaction);
+        return transactionMapper.mapToDto(updatedTransaction);
     }
 
     @DeleteMapping("/{id}")
@@ -64,25 +64,10 @@ public class TransactionController {
     }
 
     public TransactionController(TransactionService transactionService,
-                                 ModelMapper modelMapper,
-                                 StringToTransactionTypeConverter stringToTransactionTypeConverter) {
+                                 StringToTransactionTypeConverter stringToTransactionTypeConverter,
+                                 TransactionMapper transactionMapper) {
         this.transactionService = transactionService;
-        this.modelMapper = modelMapper;
         this.stringToTransactionTypeConverter = stringToTransactionTypeConverter;
+        this.transactionMapper = transactionMapper;
     }
-
-
-    //entity <-> dto conversion
-
-    private TransactionDto convertEntityToDto(Transaction transaction) {
-        TransactionDto transactionDto = modelMapper.map(transaction, TransactionDto.class);
-        return transactionDto;
-    }
-
-    private Transaction convertDtoToEntity(TransactionDto transactionDto) {
-        Transaction transaction = modelMapper.map(transactionDto, Transaction.class);
-        transaction.setTransactionType(stringToTransactionTypeConverter.convert(transactionDto.getType()));
-        return transaction;
-    }
-
 }
