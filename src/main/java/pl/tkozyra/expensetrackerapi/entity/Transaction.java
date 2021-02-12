@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "transactions")
 public class Transaction {
 
     @Id
@@ -25,8 +26,12 @@ public class Transaction {
 
     private String description;
 
-    public Transaction(BigDecimal amount) {
+    public Transaction(BigDecimal amount, String currency, TransactionType transactionType, LocalDate date, String description) {
         this.amount = amount;
+        this.currency = currency;
+        this.transactionType = transactionType;
+        this.date = date;
+        this.description = description;
     }
 
     public Transaction() {

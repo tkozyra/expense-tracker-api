@@ -7,22 +7,25 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import pl.tkozyra.expensetrackerapi.service.UserService;
 
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-//    private UserService userService;
+    private UserService userService;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        super.configure(auth);
+        auth.userDetailsService(userService);
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers("users/signup").permitAll()
-                .anyRequest().authenticated();
+        http.csrf().disable().authorizeRequests()
+                .antMatchers("/transactions").hasRole("USER")
+                .antMatchers("users/register").permitAll()
+                .and()
+                .formLogin();
     }
 
     @Bean
@@ -30,7 +33,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-//    public WebSecurityConfig(UserService userService) {
-//        this.userService = userService;
-//    }
+    public WebSecurityConfig(UserService userService) {
+        this.userService = userService;
+    }
 }
