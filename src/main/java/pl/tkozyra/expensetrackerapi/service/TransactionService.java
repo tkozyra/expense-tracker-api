@@ -2,6 +2,7 @@ package pl.tkozyra.expensetrackerapi.service;
 
 import org.springframework.stereotype.Service;
 import pl.tkozyra.expensetrackerapi.entity.Transaction;
+import pl.tkozyra.expensetrackerapi.params.TransactionParams;
 import pl.tkozyra.expensetrackerapi.repository.TransactionRepository;
 
 import java.util.List;
@@ -14,6 +15,10 @@ public class TransactionService {
 
     public List<Transaction> findAll() {
         return transactionRepository.findAll();
+    }
+
+    public List<Transaction> findAll(TransactionParams transactionParams) {
+        return transactionRepository.findAll(transactionParams.convertToExample());
     }
 
     public Optional<Transaction> findById(Long id) {

@@ -11,6 +11,7 @@ import java.time.LocalDate;
 public class Transaction {
 
     @Id
+    @Column(name = "transaction_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
@@ -26,12 +27,22 @@ public class Transaction {
 
     private String description;
 
-    public Transaction(BigDecimal amount, String currency, TransactionType transactionType, LocalDate date, String description) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    public Transaction(BigDecimal amount,
+                       String currency,
+                       TransactionType transactionType,
+                       LocalDate date,
+                       String description,
+                       User user) {
         this.amount = amount;
         this.currency = currency;
         this.transactionType = transactionType;
         this.date = date;
         this.description = description;
+        this.user = user;
     }
 
     public Transaction() {
@@ -83,5 +94,13 @@ public class Transaction {
 
     public void setTransactionType(TransactionType transactionType) {
         this.transactionType = transactionType;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

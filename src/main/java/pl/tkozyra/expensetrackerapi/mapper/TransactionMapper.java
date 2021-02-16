@@ -6,6 +6,9 @@ import pl.tkozyra.expensetrackerapi.dto.TransactionDto;
 import pl.tkozyra.expensetrackerapi.entity.Transaction;
 import pl.tkozyra.expensetrackerapi.utils.StringToTransactionTypeConverter;
 
+/**
+ * Mapper class responsible for entity<->dto mapping for transactions
+ */
 @Component
 public class TransactionMapper {
 
@@ -14,6 +17,7 @@ public class TransactionMapper {
 
     public TransactionDto mapToDto(Transaction transaction) {
         TransactionDto transactionDto = modelMapper.map(transaction, TransactionDto.class);
+        transactionDto.setUserId(transaction.getUser().getId());
         return transactionDto;
     }
 

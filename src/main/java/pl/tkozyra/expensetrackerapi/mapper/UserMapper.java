@@ -6,6 +6,9 @@ import org.springframework.stereotype.Component;
 import pl.tkozyra.expensetrackerapi.dto.UserDto;
 import pl.tkozyra.expensetrackerapi.entity.User;
 
+/**
+ * Mapper class responsible for entity<->dto mapping for users
+ */
 @Component
 public class UserMapper {
 

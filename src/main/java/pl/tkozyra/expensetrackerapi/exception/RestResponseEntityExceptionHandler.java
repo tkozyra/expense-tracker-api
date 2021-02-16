@@ -21,7 +21,21 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                 LocalDateTime.now(),
                 HttpStatus.NOT_FOUND.value(),
                 "Not Found",
-                "Transaction with given ID not found.",
+                "Transaction not found",
+                ((ServletWebRequest)request).getRequest().getRequestURL().toString());
+
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    protected ResponseEntity<Object> handleUserNotFound(
+            WebRequest request) {
+
+        CustomErrorResponse body = new CustomErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                "Not Found",
+                "User not found",
                 ((ServletWebRequest)request).getRequest().getRequestURL().toString());
 
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
