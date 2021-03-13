@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.tkozyra.expensetrackerapi.dto.TransactionDto;
 import pl.tkozyra.expensetrackerapi.entity.Transaction;
 import pl.tkozyra.expensetrackerapi.exception.TransactionNotFoundException;
-import pl.tkozyra.expensetrackerapi.mapper.TransactionMapper;
+import pl.tkozyra.expensetrackerapi.dto.mapper.TransactionMapper;
 import pl.tkozyra.expensetrackerapi.params.TransactionParams;
 import pl.tkozyra.expensetrackerapi.service.TransactionService;
 import pl.tkozyra.expensetrackerapi.service.UserService;

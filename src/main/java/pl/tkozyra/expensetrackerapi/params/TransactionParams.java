@@ -10,28 +10,12 @@ import pl.tkozyra.expensetrackerapi.utils.StringToTransactionTypeConverter;
  */
 public class TransactionParams {
 
-    private String type;
-    private String currency;
-    private Long userId;
+    private final String type;
+    private final String currency;
+    private final Long userId;
 
-    private UserService userService;
-    private StringToTransactionTypeConverter stringToTransactionTypeConverter;
-
-    public Example<Transaction> convertToExample() {
-        Transaction transaction = new Transaction();
-
-        if(this.type != null){
-            transaction.setTransactionType(stringToTransactionTypeConverter.convert(this.type));
-        }
-        if(this.currency != null){
-            transaction.setCurrency(this.currency);
-        }
-        if(this.userId != null){
-            transaction.setUser(userService.findById(this.userId));
-        }
-
-        return Example.of(transaction);
-    }
+    private final UserService userService;
+    private final StringToTransactionTypeConverter stringToTransactionTypeConverter;
 
     public TransactionParams(String type,
                              String currency,
@@ -45,30 +29,20 @@ public class TransactionParams {
         this.stringToTransactionTypeConverter = stringToTransactionTypeConverter;
     }
 
-    public TransactionParams() {
+    public Example<Transaction> convertToExample() {
+        Transaction transaction = new Transaction();
+
+        if (this.type != null) {
+            transaction.setTransactionType(stringToTransactionTypeConverter.convert(this.type));
+        }
+        if (this.currency != null) {
+            transaction.setCurrency(this.currency);
+        }
+        if (this.userId != null) {
+            transaction.setUser(userService.findById(this.userId));
+        }
+
+        return Example.of(transaction);
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
 }
