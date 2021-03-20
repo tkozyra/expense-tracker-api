@@ -1,43 +1,46 @@
 package pl.tkozyra.expensetrackerapi.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import pl.tkozyra.expensetrackerapi.dto.TransactionDto;
+import pl.tkozyra.expensetrackerapi.dto.mapper.TransactionMapper;
 import pl.tkozyra.expensetrackerapi.entity.Transaction;
+import pl.tkozyra.expensetrackerapi.exception.TransactionNotFoundException;
 import pl.tkozyra.expensetrackerapi.params.TransactionParams;
 import pl.tkozyra.expensetrackerapi.repository.TransactionRepository;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
+@AllArgsConstructor
 @Service
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
+    private final TransactionMapper transactionMapper;
 
     public List<Transaction> findAll() {
         return transactionRepository.findAll();
     }
 
-    public List<Transaction> findAll(TransactionParams transactionParams) {
-        return transactionRepository.findAll(transactionParams.convertToExample());
+    public List<TransactionDto> findAll(TransactionParams transactionParams) {
+        return transactionRepository
+                .findAll(transactionParams.convertToExample())
+                .stream()
+                .map(transactionMapper::mapToDto)
+                .collect(Collectors.toList());
     }
 
-    public Optional<Transaction> findById(Long id) {
-        return transactionRepository.findById(id);
+    public TransactionDto findById(Long id) {
+        Transaction transaction = transactionRepository.findById(id).orElseThrow(() -> new TransactionNotFoundException(id));
+        return transactionMapper.mapToDto(transaction);
     }
 
-    public Transaction create(Transaction transaction) {
-        return transactionRepository.save(transaction);
+    public TransactionDto save(TransactionDto transactionDto) {
+        return transactionMapper.mapToDto(transactionRepository.save(transactionMapper.mapToEntity(transactionDto)));
     }
 
-    public Transaction save(Transaction transaction) {
-        return transactionRepository.save(transaction);
-    }
-
-    public void deleteById(Long id) {
+    public void delete(Long id) {
         transactionRepository.deleteById(id);
-    }
-
-    public TransactionService(TransactionRepository transactionRepository) {
-        this.transactionRepository = transactionRepository;
     }
 }

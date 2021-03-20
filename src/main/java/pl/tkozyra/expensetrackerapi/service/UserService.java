@@ -1,17 +1,27 @@
 package pl.tkozyra.expensetrackerapi.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import pl.tkozyra.expensetrackerapi.dto.UserDto;
+import pl.tkozyra.expensetrackerapi.dto.mapper.UserMapper;
 import pl.tkozyra.expensetrackerapi.entity.User;
+import pl.tkozyra.expensetrackerapi.exception.EmailAlreadyInUseException;
 import pl.tkozyra.expensetrackerapi.exception.UserNotFoundException;
+import pl.tkozyra.expensetrackerapi.exception.UsernameAlreadyInUseException;
 import pl.tkozyra.expensetrackerapi.repository.UserRepository;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+@AllArgsConstructor
 @Service
 public class UserService implements UserDetailsService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -19,8 +29,22 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(UserNotFoundException::new);
     }
 
-    public User save(User user) {
-        return userRepository.save(user);
+    public UserDto save(UserDto userDto) {
+
+        if (userWithGivenUsernameAlreadyExists(userDto.getUsername())) {
+            throw new UsernameAlreadyInUseException();
+        }
+        if (userWithGivenEmailAlreadyExists(userDto.getEmail())) {
+            throw new EmailAlreadyInUseException();
+        }
+
+        return userMapper.mapToDto(userRepository.save(userMapper.mapToEntity(userDto)));
+    }
+
+    public List<UserDto> findAll() {
+        return userRepository.findAll().stream()
+                .map(userMapper::mapToDto)
+                .collect(Collectors.toList());
     }
 
     public User findById(Long id) {
@@ -34,9 +58,5 @@ public class UserService implements UserDetailsService {
 
     public boolean userWithGivenEmailAlreadyExists(String email) {
         return userRepository.findByEmail(email).isPresent();
-    }
-
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
     }
 }

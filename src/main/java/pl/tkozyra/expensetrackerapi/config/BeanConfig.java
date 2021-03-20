@@ -3,7 +3,7 @@ package pl.tkozyra.expensetrackerapi.config;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import pl.tkozyra.expensetrackerapi.utils.StringToTransactionTypeConverter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
 public class BeanConfig {
@@ -14,7 +14,7 @@ public class BeanConfig {
     }
 
     @Bean
-    public StringToTransactionTypeConverter stringToTransactionTypeConverter() {
-        return new StringToTransactionTypeConverter();
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

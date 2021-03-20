@@ -1,38 +1,28 @@
 package pl.tkozyra.expensetrackerapi.controller;
 
-import org.springframework.http.ResponseEntity;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import pl.tkozyra.expensetrackerapi.dto.UserDto;
-import pl.tkozyra.expensetrackerapi.entity.User;
-import pl.tkozyra.expensetrackerapi.dto.mapper.UserMapper;
 import pl.tkozyra.expensetrackerapi.service.UserService;
 
+import java.util.List;
+
+@AllArgsConstructor
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
 
-    private UserService userService;
-    private UserMapper userMapper;
+    private final UserService userService;
 
-    public UserController(UserService userService,
-                          UserMapper userMapper) {
-        this.userMapper = userMapper;
-        this.userService = userService;
+    @GetMapping
+    public List<UserDto> findAll() {
+        return userService.findAll();
     }
 
     @CrossOrigin
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody UserDto userDto) {
-        User user = userMapper.mapToEntity(userDto);
-
-        if (this.userService.userWithGivenUsernameAlreadyExists(user.getUsername())) {
-            return ResponseEntity.status(409).body("User with given username already exists.");
-        } else if (this.userService.userWithGivenEmailAlreadyExists(user.getEmail())) {
-            return ResponseEntity.status(409).body("User with given email already exists.");
-        } else {
-            this.userService.save(user);
-            return ResponseEntity.status(201).body("Registered successfully.");
-        }
+    public UserDto registerUser(@RequestBody UserDto userDto) {
+        return userService.save(userDto);
     }
 
 }

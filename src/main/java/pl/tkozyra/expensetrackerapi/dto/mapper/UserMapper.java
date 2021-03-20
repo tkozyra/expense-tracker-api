@@ -15,6 +15,12 @@ public class UserMapper {
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
 
+    public UserMapper(ModelMapper modelMapper,
+                      PasswordEncoder passwordEncoder) {
+        this.modelMapper = modelMapper;
+        this.passwordEncoder = passwordEncoder;
+    }
+
     public User mapToEntity(UserDto userDto) {
         User user = modelMapper.map(userDto, User.class);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -22,9 +28,7 @@ public class UserMapper {
         return user;
     }
 
-    public UserMapper(ModelMapper modelMapper,
-                      PasswordEncoder passwordEncoder) {
-        this.modelMapper = modelMapper;
-        this.passwordEncoder = passwordEncoder;
+    public UserDto mapToDto(User user) {
+        return modelMapper.map(user, UserDto.class);
     }
 }
