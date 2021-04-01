@@ -18,34 +18,34 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
-public class UserService implements UserDetailsService {
+public class UserService {
 
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
+//    private final UserMapper userMapper;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username)
-                .orElseThrow(UserNotFoundException::new);
-    }
+//    @Override
+//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+//        return userRepository.findByUsername(username)
+//                .orElseThrow(UserNotFoundException::new);
+//    }
 
-    public UserDto save(UserDto userDto) {
+//    public UserDto save(UserDto userDto) {
+//
+//        if (userWithGivenUsernameAlreadyExists(userDto.getUsername())) {
+//            throw new UsernameAlreadyInUseException();
+//        }
+//        if (userWithGivenEmailAlreadyExists(userDto.getEmail())) {
+//            throw new EmailAlreadyInUseException();
+//        }
+//
+//        return userMapper.mapToDto(userRepository.save(userMapper.mapToEntity(userDto)));
+//    }
 
-        if (userWithGivenUsernameAlreadyExists(userDto.getUsername())) {
-            throw new UsernameAlreadyInUseException();
-        }
-        if (userWithGivenEmailAlreadyExists(userDto.getEmail())) {
-            throw new EmailAlreadyInUseException();
-        }
-
-        return userMapper.mapToDto(userRepository.save(userMapper.mapToEntity(userDto)));
-    }
-
-    public List<UserDto> findAll() {
-        return userRepository.findAll().stream()
-                .map(userMapper::mapToDto)
-                .collect(Collectors.toList());
-    }
+//    public List<UserDto> findAll() {
+//        return userRepository.findAll().stream()
+//                .map(userMapper::mapToDto)
+//                .collect(Collectors.toList());
+//    }
 
     public User findById(Long id) {
         return userRepository.findById(id)
@@ -58,5 +58,13 @@ public class UserService implements UserDetailsService {
 
     public boolean userWithGivenEmailAlreadyExists(String email) {
         return userRepository.findByEmail(email).isPresent();
+    }
+
+    public Boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    public Boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
     }
 }

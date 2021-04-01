@@ -1,6 +1,7 @@
 package pl.tkozyra.expensetrackerapi.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pl.tkozyra.expensetrackerapi.dto.TransactionDto;
 import pl.tkozyra.expensetrackerapi.params.TransactionParams;
@@ -11,7 +12,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/api/transactions")
 public class TransactionController {
 
@@ -19,6 +20,7 @@ public class TransactionController {
     private final UserService userService;
 
     @GetMapping
+    @PreAuthorize("hasRole('USER')")
     public List<TransactionDto> findAll(@RequestParam(required = false) String type,
                                         @RequestParam(required = false) String currency,
                                         @RequestParam(required = false) Long userId) {
@@ -26,21 +28,25 @@ public class TransactionController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public TransactionDto findById(@PathVariable Long id) {
         return transactionService.findById(id);
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('USER')")
     public TransactionDto createTransaction(@RequestBody TransactionDto transactionDto) {
         return transactionService.save(transactionDto);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public TransactionDto updateTransaction(@RequestBody TransactionDto transactionDto) {
         return transactionService.save(transactionDto);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public void deleteTransaction(@PathVariable Long id) {
         transactionService.delete(id);
     }
