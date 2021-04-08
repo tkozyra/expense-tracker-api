@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @RestController
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/api/auth")
 public class AuthController {
 
@@ -85,7 +86,7 @@ public class AuthController {
 
         if (strRoles == null) {
             Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    .orElseThrow(() -> new RuntimeException("Error: Role not found."));
             roles.add(userRole);
         } else {
             strRoles.forEach(role -> {
