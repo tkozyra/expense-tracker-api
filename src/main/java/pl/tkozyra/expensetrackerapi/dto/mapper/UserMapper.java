@@ -24,7 +24,7 @@ public class UserMapper {
     public User mapToEntity(UserDto userDto) {
         User user = modelMapper.map(userDto, User.class);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRole("ROLE_USER");
+//        user.setRole("ROLE_USER");
         return user;
     }
 
